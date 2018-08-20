@@ -1,0 +1,14 @@
+# Sample Workflow 
+output: MakeWhaleSay
+
+tasks:
+  DataProducer:
+    run: jp
+    
+
+  MakeWhaleSay:
+    run: whalesay
+    inputs:
+      body: "{$.Tasks.DataProducer.Output}"
+    requires:
+    - DataProducer    
