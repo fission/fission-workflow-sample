@@ -1,0 +1,24 @@
+# Sample Workflow 
+apiVersion: 1
+output: DataSplitter
+tasks:
+  DataProducer:
+    run: carpool
+    inputs: "{ $.Invocation.Inputs }"
+
+  DataSplitter:
+    run: foreach
+    inputs:
+      foreach: "{ output('DataProducer') }"
+      do:
+        run: if
+        inputs: 
+          if: "{ task().Inputs._item.availableSeats > 3 }"
+          then:
+            run: noop
+            inputs: "{ task().Inputs._item }"
+          else:
+            run: noop
+            inputs: "{ task().Inputs._item }"
+    requires:
+    - DataProducer

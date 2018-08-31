@@ -4,7 +4,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.fission.workflow</groupId>
-	<artifactId>iot-workflow-producer</artifactId>
+	<artifactId>carpool-producer</artifactId>
 	<version>1.0.0</version>
 	<name>IoT Producer</name>
 
