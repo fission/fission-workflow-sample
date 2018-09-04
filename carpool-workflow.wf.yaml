@@ -1,24 +1,24 @@
-# Sample Workflow 
+# Carpool Workflow 
 apiVersion: 1
-output: DataSplitter
+output: CarpoolAllocator
 tasks:
   DataProducer:
-    run: carpool
+    run: cpproducer
     inputs: "{ $.Invocation.Inputs }"
 
-  DataSplitter:
+  DataValidator:
     run: foreach
     inputs:
       foreach: "{ output('DataProducer') }"
       do:
-        run: if
-        inputs: 
-          if: "{ task().Inputs._item.availableSeats > 3 }"
-          then:
-            run: noop
-            inputs: "{ task().Inputs._item }"
-          else:
-            run: noop
-            inputs: "{ task().Inputs._item }"
+        run: cpvalidator
+        inputs:
+          body: "{ task().Inputs._item }"
     requires:
     - DataProducer
+
+  CarpoolAllocator:
+    run: cpallocator
+    inputs: "{ $.Tasks.DataValidator.Output }"
+    requires:
+    - DataValidator

@@ -1,0 +1,14 @@
+apiVersion: fission.io/v1
+kind: HTTPTrigger
+metadata:
+  creationTimestamp: null
+  name: 408fd31e-5149-4c0c-acb0-9445d4a05f37
+  namespace: default
+spec:
+  createingress: false
+  functionref:
+    name: carpool-web
+    type: name
+  host: ""
+  method: GET
+  relativeurl: /carpoolweb/{html:[a-zA-Z0-9\.\/]+}

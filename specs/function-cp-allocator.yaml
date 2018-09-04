@@ -1,20 +1,20 @@
 include:
-- 01_carpool_producer/target/carpool-producer-1.0.0-jar-with-dependencies.jar
+- 03_carpool_allocator/target/carpool-allocator-1.0.0-jar-with-dependencies.jar 
 kind: ArchiveUploadSpec
-name: carpool-producer-1-0-0-jar-with-dependencies-jar
+name: carpool-allocator-1-0-0-jar-with-dependencies-jar
 
 ---
 apiVersion: fission.io/v1
 kind: Package
 metadata:
   creationTimestamp: null
-  name: carpool-producer-1-0-0-jar-with-dependencies-jar-owhb
+  name: carpool-allocator-1-0-0-jar-with-dependencies-jar-owhb
   namespace: default
 spec:
   deployment:
     checksum: {}
     type: url
-    url: archive://carpool-producer-1-0-0-jar-with-dependencies-jar
+    url: archive://carpool-allocator-1-0-0-jar-with-dependencies-jar
   environment:
     name: java
     namespace: default
@@ -28,7 +28,7 @@ apiVersion: fission.io/v1
 kind: Function
 metadata:
   creationTimestamp: null
-  name: carpool
+  name: cpallocator
   namespace: default
 spec:
   InvokeStrategy:
@@ -43,9 +43,9 @@ spec:
     name: java
     namespace: default
   package:
-    functionName: io.fission.workflow.CarPoolProducer
+    functionName: io.fission.workflow.CarPoolAllocator
     packageref:
-      name: carpool-producer-1-0-0-jar-with-dependencies-jar-owhb
+      name: carpool-allocator-1-0-0-jar-with-dependencies-jar-owhb
       namespace: default
   resources: {}
   secrets: null
