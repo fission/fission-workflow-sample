@@ -1,0 +1,50 @@
+include:
+- ./carpool-workflow.wf.yaml
+kind: ArchiveUploadSpec
+name: carpool-workflow-wf-yaml
+
+---
+apiVersion: fission.io/v1
+kind: Package
+metadata:
+  creationTimestamp: null
+  name: carpool-workflow-wf-yaml-hiri
+  namespace: default
+spec:
+  deployment:
+    checksum: {}
+  environment:
+    name: workflow
+    namespace: default
+  source:
+    checksum: {}
+    type: url
+    url: archive://carpool-workflow-wf-yaml
+status:
+  buildstatus: pending
+
+---
+apiVersion: fission.io/v1
+kind: Function
+metadata:
+  creationTimestamp: null
+  name: carpool
+  namespace: default
+spec:
+  InvokeStrategy:
+    ExecutionStrategy:
+      ExecutorType: poolmgr
+      MaxScale: 1
+      MinScale: 0
+      TargetCPUPercent: 80
+    StrategyType: execution
+  configmaps: null
+  environment:
+    name: workflow
+    namespace: default
+  package:
+    packageref:
+      name: carpool-workflow-wf-yaml-hiri
+      namespace: default
+  resources: {}
+  secrets: null

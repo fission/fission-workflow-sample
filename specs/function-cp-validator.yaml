@@ -1,0 +1,51 @@
+include:
+- 02_carpool_validator/target/carpool-validator-1.0.0-jar-with-dependencies.jar
+kind: ArchiveUploadSpec
+name: carpool-validator-1-0-0-jar-with-dependencies-jar
+
+---
+apiVersion: fission.io/v1
+kind: Package
+metadata:
+  creationTimestamp: null
+  name: carpool-validator-1-0-0-jar-with-dependencies-jar-owhb
+  namespace: default
+spec:
+  deployment:
+    checksum: {}
+    type: url
+    url: archive://carpool-validator-1-0-0-jar-with-dependencies-jar
+  environment:
+    name: java
+    namespace: default
+  source:
+    checksum: {}
+status:
+  buildstatus: none
+
+---
+apiVersion: fission.io/v1
+kind: Function
+metadata:
+  creationTimestamp: null
+  name: cpvalidator
+  namespace: default
+spec:
+  InvokeStrategy:
+    ExecutionStrategy:
+      ExecutorType: newdeploy
+      MaxScale: 2
+      MinScale: 1
+      TargetCPUPercent: 80
+    StrategyType: execution
+  configmaps: null
+  environment:
+    name: java
+    namespace: default
+  package:
+    functionName: io.fission.workflow.CarPoolValidator
+    packageref:
+      name: carpool-validator-1-0-0-jar-with-dependencies-jar-owhb
+      namespace: default
+  resources: {}
+  secrets: null

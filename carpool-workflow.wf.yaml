@@ -1,0 +1,24 @@
+# Carpool Workflow 
+apiVersion: 1
+output: CarpoolAllocator
+tasks:
+  DataProducer:
+    run: cpproducer
+    inputs: "{ $.Invocation.Inputs }"
+
+  DataValidator:
+    run: foreach
+    inputs:
+      foreach: "{ output('DataProducer') }"
+      do:
+        run: cpvalidator
+        inputs:
+          body: "{ task().Inputs._item }"
+    requires:
+    - DataProducer
+
+  CarpoolAllocator:
+    run: cpallocator
+    inputs: "{ $.Tasks.DataValidator.Output }"
+    requires:
+    - DataValidator
