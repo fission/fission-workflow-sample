@@ -90,30 +90,23 @@
                 <li class="breadcrumb-item active">Overview</li>
             </ol>
 
-            <div class="row">
-                <div class="col-xl-3 col-sm-6 mb-3">
-                    <div class="card text-white bg-light o-hidden h-100">
-                        <div class="card-body">
-                            <div class="card-body-icon">
-                                <i class="fas fa-fw fa-comments"></i>
-                            </div>
-                            <div class="mr-5">Average Riders Allocated</div>
-                            <div>
-                                <canvas id="ridesAllocatedAverage" width="100%" height="100"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Area Chart Example-->
+            <!-- Area Chart For riders who did not get a carpool -->
             <div class="card mb-3">
                 <div class="card-header">
                     <i class="fas fa-chart-area"></i>
-                    Carpools Allocated</div>
+                    Riders without a Carpool</div>
                 <div class="card-body">
-                    <canvas id="carPoolChart" width="100%" height="25"></canvas>
+                    <canvas id="carPoolChart" width="100%" height="40"></canvas>
+                </div>
+                <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-chart-area"></i>
+                    Matched Carpool rides</div>
+                <div class="card-body">
+                    <canvas id="carPoolDistribution" width="100%" height="40"></canvas>
                 </div>
                 <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
             </div>
@@ -149,46 +142,71 @@
         // Finally data Chart for one route
         $.ajax({
             type: 'get',
-            url: 'http://35.200.186.19/fission-function/carpool',
+            url: '/fission-function/carpool',
             crossDomain: true,
             origin: "*",
             success: function (response) {
-                var umdata = JSON.parse(response).unmatchedRiders;
-                var ummap = new Object();
-                for (var i = 0; i < umdata.length; i++) {
-                    console.log(umdata[i])
-                    ummap[umdata[i].name] = umdata[i].seatsRequested
+                var unmatchedRiders = JSON.parse(response).unmatchedRiders;
+                var unmatchedRiderMap = new Object();
+                for (var i = 0; i < unmatchedRiders.length; i++) {
+                    unmatchedRiderMap[unmatchedRiders[i].name] = unmatchedRiders[i].seatsRequested
                 }
-                console.log(ummap)
-                console.log(Object.keys(ummap))
-                console.log(Object.values(ummap))
+                var matches = JSON.parse(response).matchedRides;
+                var matchedRideStats = new Object()
+                for (var match in matches) {
+                    var sum = 0;
+                    for (var j = 0; j < matches[match].length; j++) {
+                        sum = sum + matches[match][j].seatsRequested;
+                    }
+                    matchedRideStats[match] = sum;
+                }
+
                 new Chart(document.getElementById("carPoolChart"), {
                     type: 'bar',
                     data: {
-                        labels: Object.keys(Object.keys(ummap)),
+                        labels: Object.keys(unmatchedRiderMap),
                         datasets: [
                             {
                                 label: "Riders vs. Seats Requested",
-                                backgroundColor: ["#3e95cd"],
-                                data: Object.values(ummap),
+                                backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850", "#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850", "#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850", "#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850", "#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"],
+                                data: Object.values(unmatchedRiderMap),
                                 fill: true
                             }
                         ]
                     },
                     options: {
                         scales: {
-                            xAxes: [{
-                                gridLines: {
-                                    display: true
-                                }
-                            }],
                             yAxes: [{
                                 ticks: {
-                                    min: 1,
+                                    min: 0,
                                     max: 3
-                                },
-                                gridLines: {
-                                    color: "rgba(0, 0, 0, .125)",
+                                }
+                            }],
+                        },
+                        legend: {
+                            display: true
+                        }
+                    }
+                });
+                new Chart(document.getElementById("carPoolDistribution"), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(matchedRideStats),
+                        datasets: [
+                            {
+                                label: "Number of seats carried by each Car",
+                                backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850", "#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850", "#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"],
+                                data: Object.values(matchedRideStats),
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    min: 0,
+                                    max: 10
                                 }
                             }],
                         },
